@@ -25,7 +25,6 @@
     .menu a{display:flex;align-items:center;gap:10px;text-decoration:none;color:#ddd;padding:12px 16px;border-radius:10px}
     .menu a:hover,.menu a.active{background:var(--sidebar-hover);color:#fff}
     .caret{margin-left:auto;color:#bbb}
-    /* Use details/summary for submenu (no JS) */
     details{border-radius:10px}
     details > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 16px;color:#ddd;border-radius:10px}
     details[open] > summary{background:var(--sidebar-hover);color:#fff}
@@ -66,21 +65,18 @@
       </li>
 
       <li>
-        <details>
-          <summary>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z"/></svg>
-            Laporan Barang
-            <svg class="caret" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-          </summary>
-          <div class="submenu">
-            <a href="{{ url('/laporan/stok') }}">Stok</a>
-            <a href="{{ url('/laporan/kadaluwarsa') }}">Kadaluwarsa</a>
-          </div>
-        </details>
+        <a href="{{ route('ui.laporan-barang') }}"
+           class="{{ request()->is('laporan/barang') || request()->is('laporan-barang') ? 'active' : '' }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z"/>
+          </svg>
+          Laporan Barang
+        </a>
       </li>
 
       <li>
-        <a href="{{ url('/laporan/penjualan') }}">
+        <a href="{{ route('ui.laporan-penjualan') }}"
+           class="{{ request()->is('laporan-penjualan') ? 'active' : '' }}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h2v18H3V3Zm16 0h2v18h-2V3ZM9 7h6v2H9V7Zm0 4h8v2H9v-2Zm0 4h5v2H9v-2Z"/></svg>
           Laporan Penjualan
         </a>
@@ -90,11 +86,7 @@
 
   <!-- MAIN CONTENT -->
   <main class="content">
-    {{-- header slot di kiri atas (Owner) --}}
-    @isset($header)
-      <div class="mb-3 text-xl font-semibold">{{ $header }}</div>
-    @endisset
-
+    {{-- Header dihilangkan --}}
     {{ $slot }}
   </main>
 </div>

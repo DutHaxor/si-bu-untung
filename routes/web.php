@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LaporanPenjualanController; 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PelangganAuthController;
@@ -33,7 +34,6 @@ Route::middleware('auth:staff')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
     /* ====== Halaman UI sesuai sidebar (mockup) ====== */
-    // View: resources/views/barang/tambah.blade.php
     Route::get('/tambah', function () {
         $barang = new Barang();
         return view('barang.tambah', compact('barang'));
@@ -42,14 +42,12 @@ Route::middleware('auth:staff')->group(function () {
     Route::post('/barang/quick-store', [BarangController::class, 'quickStore'])
         ->name('barang.quick.store');
 
-    // View: resources/views/barang/edit-page.blade.php
     Route::get('/edit', [BarangController::class, 'quickEditPage'])
         ->name('ui.edit');
 
     Route::post('/barang/quick-update', [BarangController::class, 'quickUpdate'])
         ->name('barang.quick.update');
 
-    // View: resources/views/barang/hapus.blade.php
     Route::get('/hapus', function () {
         $q = request('q');
         $barangs = Barang::query()
@@ -64,9 +62,107 @@ Route::middleware('auth:staff')->group(function () {
         return view('barang.hapus', compact('barangs', 'q'));
     })->name('ui.hapus');
 
+    /* ====== Laporan Barang (VIEW) ====== */
+    // View: resources/views/filament/pages/laporan-barang.blade.php
+    Route::get('/laporan/barang', function () {
+        $q = request('q');
+        $periode = request('periode');
+        $statusFilter = request('status');
+        
+        $today = \Carbon\Carbon::today();
+        $warnDays = 30;
+        $lowStock = 10;
+
+        $query = Barang::query()
+            ->when($q, function ($qq) use ($q) {
+                $qq->where('id_barang','like',"%{$q}%")
+                   ->orWhere('nama_barang','like',"%{$q}%");
+            })
+            ->when($periode, function ($qq) use ($periode, $today) {
+                // Filter berdasarkan periode yang dipilih
+                switch ($periode) {
+                    case 'harian':
+                        // Hari ini saja
+                        $qq->whereDate('tanggal_kedaluwarsa', $today);
+                        break;
+                    case 'mingguan':
+                        // 7 hari ke depan dari hari ini
+                        $qq->whereDate('tanggal_kedaluwarsa', '>=', $today)
+                           ->whereDate('tanggal_kedaluwarsa', '<=', $today->copy()->addDays(7));
+                        break;
+                    case 'bulanan':
+                        // 30 hari ke depan dari hari ini
+                        $qq->whereDate('tanggal_kedaluwarsa', '>=', $today)
+                           ->whereDate('tanggal_kedaluwarsa', '<=', $today->copy()->addDays(30));
+                        break;
+                    case 'tahunan':
+                        // 365 hari ke depan dari hari ini
+                        $qq->whereDate('tanggal_kedaluwarsa', '>=', $today)
+                           ->whereDate('tanggal_kedaluwarsa', '<=', $today->copy()->addDays(365));
+                        break;
+                }
+            });
+
+        // Filter berdasarkan status
+        if ($statusFilter) {
+            $query->where(function ($qq) use ($statusFilter, $today, $warnDays, $lowStock) {
+                switch ($statusFilter) {
+                    case 'Kadaluwarsa':
+                        // Barang yang sudah kadaluwarsa (tanggal < today)
+                        $qq->whereNotNull('tanggal_kedaluwarsa')
+                           ->whereDate('tanggal_kedaluwarsa', '<', $today);
+                        break;
+                    case 'Hampir Kadaluwarsa':
+                        // Barang yang akan kadaluwarsa dalam 30 hari ke depan
+                        // Tapi tidak termasuk yang sudah kadaluwarsa
+                        $qq->whereNotNull('tanggal_kedaluwarsa')
+                           ->whereDate('tanggal_kedaluwarsa', '>=', $today)
+                           ->whereDate('tanggal_kedaluwarsa', '<=', $today->copy()->addDays($warnDays));
+                        break;
+                    case 'Hampir Habis':
+                        // Barang dengan stok <= 10
+                        // Tapi tidak termasuk yang sudah kadaluwarsa atau hampir kadaluwarsa
+                        // (karena prioritas status: Kadaluwarsa > Hampir Kadaluwarsa > Hampir Habis)
+                        $qq->where('stok_barang', '<=', $lowStock)
+                           ->where(function ($q) use ($today, $warnDays) {
+                               // Tidak ada tanggal kadaluwarsa ATAU tanggal > today+30 (tidak hampir kadaluwarsa)
+                               $q->whereNull('tanggal_kedaluwarsa')
+                                 ->orWhereDate('tanggal_kedaluwarsa', '>', $today->copy()->addDays($warnDays));
+                           });
+                        break;
+                    case 'Aman':
+                        // Barang yang tidak kadaluwarsa, tidak hampir kadaluwarsa, dan stok > 10
+                        $qq->where('stok_barang', '>', $lowStock)
+                           ->where(function ($q) use ($today, $warnDays) {
+                               $q->whereNull('tanggal_kedaluwarsa')
+                                 ->orWhereDate('tanggal_kedaluwarsa', '>', $today->copy()->addDays($warnDays));
+                           });
+                        break;
+                }
+            });
+        }
+
+        $barangs = $query->orderBy('tanggal_kedaluwarsa')
+            ->paginate(8)
+            ->withQueryString();
+
+        return view('filament.pages.laporan-barang', compact('barangs', 'q'));
+    })->name('ui.laporan-barang');
+
+    // Alias opsional: /laporan-barang -> /laporan/barang
+    Route::redirect('/laporan-barang', '/laporan/barang')->name('ui.laporan-barang.alias');
+
+    /* ====== Laporan Penjualan ====== */
+    // View: resources/views/filament/pages/laporan-penjualan.blade.php
+    Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])
+        ->name('ui.laporan-penjualan');
+
+    // ALIAS: /laporan/penjualan -> /laporan-penjualan
+    Route::redirect('/laporan/penjualan', '/laporan-penjualan')
+        ->name('ui.laporan-penjualan.alias');
+
     /* ====== ROUTE RESOURCE (CRUD DB) ====== */
     Route::resource('barang', BarangController::class)
-        // Pastikan getRouteKeyName() di model Barang mengembalikan 'id_barang' jika ingin binding by id_barang
         ->parameters(['barang' => 'barang'])
         ->except(['show']);
 });
@@ -92,4 +188,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// require __DIR__ . '/auth.php'; // tetap dimatikan agar tidak bentrok dengan /login custom
+// require __DIR__ . '/auth.php';

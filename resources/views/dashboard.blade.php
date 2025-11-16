@@ -8,15 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --sidebar:#181818;      /* warna sidebar (hitam keabu) */
+      --sidebar:#181818;
       --sidebar-hover:#232323;
-      --content-bg:#f5f5f5;   /* latar konten */
-      --card-bg:#ffffff;      /* latar kartu */
+      --content-bg:#f5f5f5;
+      --card-bg:#ffffff;
       --text:#111;
       --muted:#777;
-      --accent:#f0592b;       /* oranye */
-      --green:#1f9d55;        /* hijau */
-      --yellow:#f59e0b;       /* kuning */
+      --accent:#f0592b;
+      --green:#1f9d55;
+      --yellow:#f59e0b;
       --radius:14px;
       --shadow:0 10px 25px rgba(0,0,0,.06);
     }
@@ -54,8 +54,7 @@
     .metric .value{margin:6px 0 0; font-size:1.35rem; font-weight:800; letter-spacing:.3px}
     .icon-bag{background:#fff2ec; color:var(--accent)}
     .icon-people{background:#ecfff4; color:var(--green)}
-    .icon-calendar{background:#fff3f3; color:#e63939}
-    .icon-warning{background:#fff8e6; color:var(--yellow)}
+    /* .icon-calendar dan .icon-warning tidak dipakai lagi */
   </style>
 </head>
 <body>
@@ -70,7 +69,6 @@
 
     <ul class="menu">
       <li><a href="{{ url('/dashboard') }}" class="active">
-        {{-- grid icon --}}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 3H3v7h7V3Zm11 0h-7v7h7V3ZM10 14H3v7h7v-7Zm11 0h-7v7h7v-7Z"/></svg>
         Dashboard
       </a></li>
@@ -88,16 +86,13 @@
         </div>
       </li>
 
-      <li class="has-sub">
-        <a href="javascript:void(0)" onclick="toggleSub(this)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z"/></svg>
+      <li>
+        <a href="javascript:void(0)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z"/>
+          </svg>
           Laporan Barang
-          <svg class="caret" width="16" height="16" viewBox="0 0 24 24" fill="#bbb"><path d="M7 10l5 5 5-5z"/></svg>
         </a>
-        <div class="submenu">
-          <a href="{{ url('/laporan/stok') }}">Stok</a>
-          <a href="{{ url('/laporan/kadaluwarsa') }}">Kadaluwarsa</a>
-        </div>
       </li>
 
       <li>
@@ -114,7 +109,6 @@
     <div class="topbar">
       <div class="title">Owner</div>
       <a class="user-btn" title="Akun">
-        <!-- user circle icon -->
         <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
           <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12Zm0 2.4c-3.3 0-9.9 1.7-9.9 5v1.9h19.8v-2c0-3.2-6.6-4.9-9.9-4.9Z"/>
         </svg>
@@ -125,10 +119,8 @@
 
     {{-- GRID METRICS --}}
     @php
-      $totalPenjualan = $totalPenjualan ?? 1350000;   // contoh fallback
-      $totalPengunjung = $totalPengunjung ?? 35;      // contoh fallback
-      $hampirExpire = $hampirExpire ?? 3;            // contoh fallback
-      $hampirHabis = $hampirHabis ?? 1;              // contoh fallback
+      $totalPenjualan = $totalPenjualan ?? 1350000; // contoh fallback
+      $totalPengunjung = $totalPengunjung ?? 35;    // contoh fallback
       $formatRupiah = fn($n) => 'Rp ' . number_format($n, 0, ',', '.');
     @endphp
 
@@ -163,35 +155,7 @@
         </div>
       </div>
 
-      <!-- Hampir Kadaluwarsa -->
-      <div class="card">
-        <div class="metric">
-          <div class="icon icon-calendar">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2Zm13 7H4v11h16V9Z"/>
-            </svg>
-          </div>
-          <div>
-            <h4>Total Barang Hampir Kadaluwarsa</h4>
-            <div class="value">{{ $hampirExpire }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hampir Habis -->
-      <div class="card">
-        <div class="metric">
-          <div class="icon icon-warning">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M1 21h22L12 2 1 21Zm12-3h-2v-2h2v2Zm0-4h-2v-4h2v4Z"/>
-            </svg>
-          </div>
-          <div>
-            <h4>Total Barang Hampir Habis</h4>
-            <div class="value">{{ $hampirHabis }}</div>
-          </div>
-        </div>
-      </div>
+      {{-- Kartu “Hampir Kadaluwarsa” & “Hampir Habis” Dihapus --}}
     </div>
   </main>
 </div>
