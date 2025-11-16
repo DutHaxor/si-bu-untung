@@ -26,36 +26,263 @@
   @endphp
 
   <style>
-    .page-container{max-width:1100px;margin:0 auto}
-    .section-title{font:800 26px/1.2 'Poppins',system-ui;margin:0 0 18px}
+    /* Animasi Keyframes */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-    .filters{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px}
-    .field{display:flex;flex-direction:column;gap:8px}
-    .field label{font:600 13px 'Poppins',system-ui;color:#111}
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideDownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .page-container{
+      max-width:1100px;
+      margin:0 auto;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .section-title{
+      font:800 26px/1.2 'Poppins',system-ui;
+      margin:0 0 18px;
+      animation: fadeInUp 0.5s ease-out 0.2s backwards;
+    }
+
+    .filters{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+      margin-bottom:18px;
+      animation: fadeInUp 0.5s ease-out 0.3s backwards;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .field label{
+      font:600 13px 'Poppins',system-ui;
+      color:#111;
+      transition: color 0.2s ease;
+    }
+
+    .field:focus-within label {
+      color: #2563eb;
+    }
+
     .select,.input{
-      height:38px;border:1px solid #e5e7eb;border-radius:8px;padding:0 12px;background:#fff;
-      font:500 13px/38px 'Poppins',system-ui;color:#111;min-width:160px
+      height:38px;
+      border:1px solid #e5e7eb;
+      border-radius:8px;
+      padding:0 12px;
+      background:#fff;
+      font:500 13px/38px 'Poppins',system-ui;
+      color:#111;
+      min-width:160px;
+      transition: all 0.3s ease;
+    }
+
+    .select:hover,
+    .input:hover {
+      border-color: #cbd5e1;
+    }
+
+    .select:focus,
+    .input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      transform: translateY(-1px);
     }
 
     .btn-primary{
-      height:38px;padding:0 18px;border:0;border-radius:999px;background:#2563eb;color:#fff;
-      font:600 13px/38px 'Poppins',system-ui;cursor:pointer
+      height:38px;
+      padding:0 18px;
+      border:0;
+      border-radius:999px;
+      background:#2563eb;
+      color:#fff;
+      font:600 13px/38px 'Poppins',system-ui;
+      cursor:pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
     }
-    .btn-primary:hover{filter:brightness(.95)}
 
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.06)}
-    .card-hd{padding:14px 16px;font:700 14px 'Poppins',system-ui;border-bottom:1px solid #e5e7eb;background:#f9fafb}
+    .btn-primary:hover{
+      background: #1d4ed8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
 
-    table{width:100%;border-collapse:collapse;font:500 13px 'Poppins',system-ui}
-    thead th{background:#f3f4f6;text-align:left;padding:10px 14px;border-bottom:1px solid #e5e7eb}
-    tbody td{padding:10px 14px;border-top:1px solid #f0f0f0}
-    tfoot td{padding:12px 14px;border-top:2px solid #e5e7eb;font-weight:700}
-    tbody tr:nth-child(odd){background:#fcfcfc}
+    .btn-primary:active {
+      transform: translateY(0);
+    }
 
-    .placeholder{margin:12px 16px 20px}
+    .card{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      box-shadow:0 10px 25px rgba(0,0,0,.06);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out 0.4s backwards;
+    }
+
+    .card:hover {
+      box-shadow: 0 15px 35px rgba(0,0,0,.1);
+      transform: translateY(-2px);
+    }
+
+    .card-hd{
+      padding:14px 16px;
+      font:700 14px 'Poppins',system-ui;
+      border-bottom:1px solid #e5e7eb;
+      background:linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font:500 13px 'Poppins',system-ui;
+    }
+
+    thead th{
+      background:#f3f4f6;
+      text-align:left;
+      padding:10px 14px;
+      border-bottom:2px solid #e5e7eb;
+      font-weight:600;
+      color:#374151;
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    tbody td{
+      padding:10px 14px;
+      border-top:1px solid #f0f0f0;
+      transition: all 0.2s ease;
+    }
+
+    tbody tr{
+      transition: all 0.2s ease;
+      animation: slideInLeft 0.4s ease-out forwards;
+      opacity: 0;
+    }
+
+    tbody tr:nth-child(1) { animation-delay: 0.5s; }
+    tbody tr:nth-child(2) { animation-delay: 0.55s; }
+    tbody tr:nth-child(3) { animation-delay: 0.6s; }
+    tbody tr:nth-child(4) { animation-delay: 0.65s; }
+    tbody tr:nth-child(5) { animation-delay: 0.7s; }
+    tbody tr:nth-child(6) { animation-delay: 0.75s; }
+    tbody tr:nth-child(7) { animation-delay: 0.8s; }
+    tbody tr:nth-child(8) { animation-delay: 0.85s; }
+    tbody tr:nth-child(n+9) { animation-delay: 0.9s; }
+
+    tbody tr:nth-child(odd){
+      background:#fcfcfc;
+    }
+
+    tbody tr:hover {
+      background: #f0f9ff !important;
+      transform: scale(1.01);
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    tbody tr:hover td {
+      color: #111827;
+    }
+
+    tfoot td{
+      padding:12px 14px;
+      border-top:2px solid #e5e7eb;
+      font-weight:700;
+      background: #f9fafb;
+      animation: fadeInUp 0.5s ease-out 0.6s backwards;
+    }
+
+    tfoot tr:hover {
+      background: #f0f9ff !important;
+    }
+
+    .placeholder{
+      margin:12px 16px 20px;
+      animation: fadeInUp 0.5s ease-out 0.5s backwards;
+    }
+
     .placeholder input{
-      width:100%;height:38px;border:1px dashed #e5e7eb;border-radius:8px;padding:0 12px;background:#f9fafb;
-      font:500 13px/38px 'Poppins',system-ui;color:#9ca3af
+      width:100%;
+      height:38px;
+      border:1px dashed #e5e7eb;
+      border-radius:8px;
+      padding:0 12px;
+      background:#f9fafb;
+      font:500 13px/38px 'Poppins',system-ui;
+      color:#9ca3af;
+      transition: all 0.3s ease;
+    }
+
+    .placeholder:hover input {
+      border-color: #cbd5e1;
+      background: #f3f4f6;
     }
   </style>
 
