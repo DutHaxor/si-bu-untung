@@ -13,6 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('detail_transaksi')) {
+            return; // Skip jika tabel sudah ada
+        }
+        
         Schema::create('detail_transaksi', function (Blueprint $table) {
             $table->id();
             $table->timestamps();

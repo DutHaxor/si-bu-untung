@@ -431,47 +431,245 @@ body{ overflow-x: hidden; }
     top: 25px;
     right: 24px;
     display: flex;
-    gap: 30px;
+    gap: 20px;
     align-items: center;
     animation: slideInRight 0.8s ease-out 0.4s both;
+    z-index: 1300;
 }
 
-.profile-link img,
-.cart-link img {
+.header-icons {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.icon-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 45px;
     height: 45px;
+    border-radius: 50%;
+    background: transparent;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    text-decoration: none;
+    outline: none;
 }
 
-.profile-link:hover img{
-    transform: scale(1.2) rotate(360deg);
+.icon-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(255, 87, 34, 0.1);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.cart-link {
+.icon-wrapper:hover {
+    transform: translateY(-2px) scale(1.1);
+    background: rgba(255, 87, 34, 0.05);
+}
+
+.icon-wrapper:hover::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.icon-wrapper:active {
+    transform: translateY(0) scale(0.95);
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.icon-wrapper:active::before {
+    transform: scale(1.2);
+    opacity: 0.3;
+}
+
+.icon {
+    width: 45px;
+    height: 45px;
     position: relative;
+    z-index: 1;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
 }
 
-.cart-link:hover img{
-    transform: scale(1.2) translateY(-3px);
+.icon-wrapper:hover .icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.icon-wrapper:active .icon {
+    transform: scale(0.9) rotate(-5deg);
+}
+
+/* Animasi pulse untuk cart icon saat hover */
+.icon-wrapper.cart-icon:hover::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #ff5722;
+    border-radius: 50%;
+    border: 2px solid white;
+    opacity: 1;
+    transform: scale(1);
+    animation: pulseCart 1.5s ease-in-out infinite;
+    z-index: 2;
+}
+
+@keyframes pulseCart {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.8;
+    }
+}
+
+/* Animasi bounce untuk profile icon saat hover */
+@keyframes bounceProfile {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+.icon-wrapper.profile-icon:hover .icon {
+    animation: bounceProfile 0.6s ease-in-out;
+}
+
+/* Style untuk button sebagai icon-wrapper */
+button.icon-wrapper {
+    width: 45px;
+    height: 45px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Profile Dropdown Menu */
+.profile-menu {
+    position: relative;
+    display: inline-block;
+    z-index: 1100;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 1200;
+    display: none;
+    animation: fadeInDown 0.3s ease-out;
+    pointer-events: auto;
+}
+
+.profile-dropdown.active {
+    display: block;
+    z-index: 1200;
+    pointer-events: auto;
+}
+
+.profile-dropdown-item {
+    padding: 14px 20px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+    pointer-events: auto;
+}
+
+.profile-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.profile-dropdown-item:hover {
+    background: #f5f5f5;
+    color: #000;
+}
+
+.profile-dropdown-item.logout {
+    border-top: 1px solid #e5e5e5;
+    background: #fff;
+    color: #ff5722;
+    border: 1px solid #ff5722;
+    border-radius: 8px;
+    margin: 8px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.profile-dropdown-item.logout:hover {
+    background: #ff5722;
+    color: #fff;
+}
+
+.profile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 900;
+    display: none;
+    pointer-events: auto;
+}
+
+.profile-overlay.active {
+    display: block;
+}
+
+.profile-menu.active .icon-wrapper {
+    background: rgba(255, 87, 34, 0.1);
 }
 
 .cart-count {
     position: absolute;
     top: -5px;
     right: -5px;
-    background: red;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff5722;
     color: white;
     border-radius: 50%;
-    padding: 4px 8px;
     font-size: 12px;
-    animation: pulse 2s ease-in-out infinite;
-    box-shadow: 0 2px 8px rgba(255,0,0,0.4);
-}
-
-.profile-link:hover,
-.cart-link:hover {
-    opacity: 0.85;
+    font-weight: 600;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(255, 87, 34, 0.4);
+    z-index: 3;
 }
 
 .scroll-reveal {
@@ -632,20 +830,25 @@ body{ overflow-x: hidden; }
     text-align: center;
 }/* Footer */
 .footer {
-    background-color: #000000; /* Set footer background to black */
-    color: #ffffff; /* Set footer text to white */
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    background-color: #000000;
+    color: #ffffff;
     padding: 60px 40px;
-    width: 100%; /* Ensure the footer takes full width of the screen */
-    position: relative; /* Position relative to span across full width */
-    left: 0; /* Start at the very left edge */
-    right: 0; /* Extend to the right edge */
-    bottom: 0; /* Stick at the bottom of the screen */
+    margin-top: 56px;
 }
 
 .footer-title {
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .footer-subtitle {
@@ -653,6 +856,9 @@ body{ overflow-x: hidden; }
     font-weight: 600;
     margin-bottom: 15px;
     margin-top: 40px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .footer-text {
@@ -660,6 +866,7 @@ body{ overflow-x: hidden; }
     line-height: 1.8;
     color: #cccccc;
     max-width: 900px;
+    margin: 0 auto;
 }
 
     </style>
@@ -672,16 +879,24 @@ body{ overflow-x: hidden; }
          * @param {number} count - Number of unique products in cart
          */
         function updateCartBadge(count) {
-            const badge = document.querySelector('.cart-count');
-            if (badge) {
-                const displayCount = count > 99 ? '99+' : count;
-                badge.textContent = displayCount;
-                
-                // Add pulse animation when count changes
-                badge.style.animation = 'none';
-                setTimeout(() => {
-                    badge.style.animation = 'pulse 0.5s ease-in-out';
-                }, 10);
+            const cartIcon = document.querySelector('.cart-icon');
+            if (!cartIcon) return;
+            
+            let badge = cartIcon.querySelector('.cart-count');
+            
+            if (count > 0) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'cart-count';
+                    badge.setAttribute('aria-live', 'polite');
+                    badge.setAttribute('aria-atomic', 'true');
+                    cartIcon.appendChild(badge);
+                }
+                badge.textContent = count > 99 ? '99+' : count;
+            } else {
+                if (badge) {
+                    badge.remove();
+                }
             }
         }
 
@@ -764,6 +979,80 @@ body{ overflow-x: hidden; }
                 };
             });
         });
+
+        // ========== PROFILE MENU FUNCTIONS ==========
+        
+        // Profile Menu Functions
+        function toggleProfileMenu(event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            const dropdown = document.getElementById('profileDropdown');
+            const overlay = document.getElementById('profileOverlay');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            const isActive = dropdown.classList.contains('active');
+            if (isActive) {
+                dropdown.classList.remove('active');
+                overlay.classList.remove('active');
+                if (profileMenu) {
+                    profileMenu.classList.remove('active');
+                }
+            } else {
+                dropdown.classList.add('active');
+                overlay.classList.add('active');
+                if (profileMenu) {
+                    profileMenu.classList.add('active');
+                }
+            }
+        }
+
+        function closeProfileMenu() {
+            const dropdown = document.getElementById('profileDropdown');
+            const overlay = document.getElementById('profileOverlay');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            if (dropdown) dropdown.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+            if (profileMenu) profileMenu.classList.remove('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profileMenu');
+            const dropdown = document.getElementById('profileDropdown');
+            const overlay = document.getElementById('profileOverlay');
+            
+            // Jika dropdown tidak aktif, tidak perlu melakukan apa-apa
+            if (!dropdown || !dropdown.classList.contains('active')) {
+                return;
+            }
+            
+            // Jika klik pada overlay, tutup dropdown
+            if (event.target === overlay) {
+                closeProfileMenu();
+                return;
+            }
+            
+            // Jika klik pada link/item di dalam dropdown, biarkan navigasi berjalan
+            if (dropdown.contains(event.target)) {
+                // Jika klik pada link, tutup dropdown setelah navigasi
+                if (event.target.closest('a.profile-dropdown-item')) {
+                    // Biarkan link melakukan navigasi normal
+                    return;
+                }
+                // Jika klik pada button logout, biarkan form submit
+                if (event.target.closest('button.profile-dropdown-item') || event.target.closest('form')) {
+                    return;
+                }
+            }
+            
+            // Jika klik di luar profile menu, tutup dropdown
+            if (profileMenu && !profileMenu.contains(event.target)) {
+                closeProfileMenu();
+            }
+        });
     </script>
 </head>
 <body>
@@ -806,20 +1095,36 @@ body{ overflow-x: hidden; }
 </div>
     
 <div class="profile-cart">
-    <a href="{{ route('profile.edit') }}" class="profile-link">
-        <img src="{{ asset('assets/profile-icon.svg') }}" alt="Profil">
-    </a>
-
-    @php
-        $unique = (int) session('cart_unique_count', 0);
-        $badge  = $unique > 99 ? '99+' : $unique;
-    @endphp
-
-    <a href="{{ route('cart.index') }}" class="cart-link" aria-label="Buka keranjang">
-        <img src="{{ asset('assets/cart-icon.svg') }}" alt="Keranjang">
-        <span class="cart-count" aria-live="polite" aria-atomic="true">{{ $badge }}</span>
-    </a>
+    <div class="header-icons">
+        <div class="profile-menu" id="profileMenu">
+            <button type="button" class="icon-wrapper profile-icon" aria-label="Profile" onclick="toggleProfileMenu(event)">
+                <img src="{{ asset('assets/profile-icon.svg') }}" alt="User profile avatar icon in circular frame" class="icon" />
+            </button>
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="{{ route('customer.transaksi') }}" class="profile-dropdown-item">Transaksi</a>
+                <a href="{{ route('customer.profile.edit') }}" class="profile-dropdown-item">Akun Saya</a>
+                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="profile-dropdown-item logout" style="width: calc(100% - 16px); border: none; background: none; font-family: inherit; font-size: inherit; cursor: pointer;">
+                        Keluar
+                    </button>
+                </form>
+            </div>
+        </div>
+        <a href="{{ route('cart.index') }}" class="icon-wrapper cart-icon" aria-label="Shopping cart">
+            <img src="{{ asset('assets/cart-icon.svg') }}" alt="Shopping cart icon showing items in basket" class="icon" />
+            @php
+                $unique = (int) session('cart_unique_count', 0);
+                $badge  = $unique > 99 ? '99+' : $unique;
+            @endphp
+            @if($unique > 0)
+                <span class="cart-count" aria-live="polite" aria-atomic="true">{{ $badge }}</span>
+            @endif
+        </a>
+    </div>
 </div>
+
+<div class="profile-overlay" id="profileOverlay"></div>
 
 @if(isset($products) && $products->count() > 0)
 <a href="{{ route('customer.home') }}" class="back-btn">

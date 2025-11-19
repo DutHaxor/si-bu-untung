@@ -13,13 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        if (Schema::hasTable('transaksi')) {
-            return; // Skip jika tabel sudah ada
-        }
-        
-        Schema::create('transaksi', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('transaksi', function (Blueprint $table) {
+            $table->dropColumn('catatan');
         });
     }
 
@@ -30,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaksi');
+        Schema::table('transaksi', function (Blueprint $table) {
+            $table->text('catatan')->nullable()->after('status_transaksi');
+        });
     }
 };
