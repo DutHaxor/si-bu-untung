@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('transaksi')) {
+            return; // Skip jika tabel sudah ada
+        }
+        
         Schema::create('transaksi', function (Blueprint $table) {
             // PK string (varchar 20)
             $table->string('id_transaksi', 20)->primary();
