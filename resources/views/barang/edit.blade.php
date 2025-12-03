@@ -462,6 +462,7 @@
             <option value="mnyk">MNYK (Minyak)</option>
             <option value="brs">BRS (Beras)</option>
             <option value="mnm">MNM (Minuman)</option>
+            <option value="mie">MIE (Mie)</option>
           </select>
           <input type="text" id="numInput" placeholder="Nomor (cth: 009)" inputmode="numeric" pattern="[0-9]*" maxlength="3">
           <button type="button" id="btnPick" class="btn-ghost">Pilih</button>

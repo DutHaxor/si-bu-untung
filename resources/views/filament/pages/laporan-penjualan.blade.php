@@ -26,69 +26,31 @@
   @endphp
 
   <style>
+    /* Modern Black & White Theme */
+    :root {
+      --primary: #121212;
+      --primary-hover: #2a2a2a;
+      --bg-card: #ffffff;
+      --border: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --focus-ring: rgba(18, 18, 18, 0.1);
+    }
+
     /* Animasi Keyframes */
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes slideDownFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .page-container{
@@ -100,6 +62,7 @@
     .section-title{
       font:800 26px/1.2 'Poppins',system-ui;
       margin:0 0 18px;
+      color: var(--text-main);
       animation: fadeInUp 0.5s ease-out 0.2s backwards;
     }
 
@@ -108,7 +71,7 @@
       gap:18px;
       flex-wrap:wrap;
       align-items:flex-end;
-      margin-bottom:18px;
+      margin-bottom:24px;
       animation: fadeInUp 0.5s ease-out 0.3s backwards;
     }
 
@@ -120,24 +83,24 @@
 
     .field label{
       font:600 13px 'Poppins',system-ui;
-      color:#111;
+      color: var(--text-main);
       transition: color 0.2s ease;
     }
 
     .field:focus-within label {
-      color: #2563eb;
+      color: var(--primary);
     }
 
     .select,.input{
-      height:38px;
+      height:42px;
       border:1px solid #e5e7eb;
-      border-radius:8px;
-      padding:0 12px;
+      border-radius:12px;
+      padding:0 14px;
       background:#fff;
-      font:500 13px/38px 'Poppins',system-ui;
-      color:#111;
-      min-width:160px;
-      transition: all 0.3s ease;
+      font:500 13px/42px 'Poppins',system-ui;
+      color: var(--text-main);
+      min-width:180px;
+      transition: all 0.2s ease;
     }
 
     .select:hover,
@@ -148,28 +111,30 @@
     .select:focus,
     .input:focus {
       outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-      transform: translateY(-1px);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
     .btn-primary{
-      height:38px;
-      padding:0 18px;
+      height:42px;
+      padding:0 24px;
       border:0;
-      border-radius:999px;
-      background:#2563eb;
+      border-radius:12px;
+      background: var(--primary);
       color:#fff;
-      font:600 13px/38px 'Poppins',system-ui;
+      font:600 13px/42px 'Poppins',system-ui;
       cursor:pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .btn-primary:hover{
-      background: #1d4ed8;
+      background: var(--primary-hover);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .btn-primary:active {
@@ -179,22 +144,24 @@
     .card{
       background:#fff;
       border:1px solid #e5e7eb;
-      border-radius:14px;
-      box-shadow:0 10px 25px rgba(0,0,0,.06);
+      border-radius:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.04);
       transition: all 0.3s ease;
       animation: fadeInUp 0.5s ease-out 0.4s backwards;
+      overflow: hidden;
     }
 
     .card:hover {
-      box-shadow: 0 15px 35px rgba(0,0,0,.1);
+      box-shadow: 0 20px 40px rgba(0,0,0,.08);
       transform: translateY(-2px);
     }
 
     .card-hd{
-      padding:14px 16px;
-      font:700 14px 'Poppins',system-ui;
+      padding:18px 24px;
+      font:700 15px 'Poppins',system-ui;
       border-bottom:1px solid #e5e7eb;
-      background:linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      background: #fafafa;
+      color: var(--text-main);
     }
 
     table{
@@ -204,20 +171,21 @@
     }
 
     thead th{
-      background:#f3f4f6;
+      background:#fafafa;
       text-align:left;
-      padding:10px 14px;
-      border-bottom:2px solid #e5e7eb;
+      padding:14px 24px;
+      border-bottom:1px solid #e5e7eb;
       font-weight:600;
-      color:#374151;
-      position:sticky;
-      top:0;
-      z-index:10;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
     }
 
     tbody td{
-      padding:10px 14px;
-      border-top:1px solid #f0f0f0;
+      padding:14px 24px;
+      border-top:1px solid #f3f4f6;
+      color: var(--text-main);
       transition: all 0.2s ease;
     }
 
@@ -237,46 +205,33 @@
     tbody tr:nth-child(8) { animation-delay: 0.85s; }
     tbody tr:nth-child(n+9) { animation-delay: 0.9s; }
 
-    tbody tr:nth-child(odd){
-      background:#fcfcfc;
-    }
-
     tbody tr:hover {
-      background: #f0f9ff !important;
-      transform: scale(1.01);
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-    }
-
-    tbody tr:hover td {
-      color: #111827;
+      background: #f9fafb !important;
     }
 
     tfoot td{
-      padding:12px 14px;
+      padding:16px 24px;
       border-top:2px solid #e5e7eb;
       font-weight:700;
-      background: #f9fafb;
-      animation: fadeInUp 0.5s ease-out 0.6s backwards;
-    }
-
-    tfoot tr:hover {
-      background: #f0f9ff !important;
+      background: #fafafa;
+      color: var(--text-main);
+      font-size: 14px;
     }
 
     .placeholder{
-      margin:12px 16px 20px;
+      margin:24px;
       animation: fadeInUp 0.5s ease-out 0.5s backwards;
     }
 
     .placeholder input{
       width:100%;
-      height:38px;
+      height:42px;
       border:1px dashed #e5e7eb;
-      border-radius:8px;
-      padding:0 12px;
+      border-radius:12px;
+      padding:0 16px;
       background:#f9fafb;
-      font:500 13px/38px 'Poppins',system-ui;
-      color:#9ca3af;
+      font:500 13px/42px 'Poppins',system-ui;
+      color: var(--text-muted);
       transition: all 0.3s ease;
     }
 

@@ -79,13 +79,17 @@ class LaporanPenjualanController extends Controller
         $dtBarangFk = Schema::hasColumn('detail_transaksi', 'id_barang') ? 'id_barang'
                     : (Schema::hasColumn('detail_transaksi', 'barang_id') ? 'barang_id' : 'id_barang');
 
-        $qtyCol = Schema::hasColumn('detail_transaksi', 'qty') ? 'qty'
+        $qtyCol = Schema::hasColumn('detail_transaksi', 'jumlah_pesanan') ? 'jumlah_pesanan'
+                : (Schema::hasColumn('detail_transaksi', 'qty') ? 'qty'
                 : (Schema::hasColumn('detail_transaksi', 'jumlah_barang') ? 'jumlah_barang'
-                : (Schema::hasColumn('detail_transaksi', 'jumlah') ? 'jumlah' : null));
+                : (Schema::hasColumn('detail_transaksi', 'jumlah') ? 'jumlah' : null)));
 
+        // Check if we have harga_satuan in detail_transaksi, otherwise use subtotal/jumlah_pesanan or get from barang
         $hargaCol = Schema::hasColumn('detail_transaksi', 'harga_satuan') ? 'harga_satuan'
                   : (Schema::hasColumn('detail_transaksi', 'harga') ? 'harga'
                   : (Schema::hasColumn('detail_transaksi', 'harga_jual') ? 'harga_jual' : null));
+        
+        $subtotalCol = Schema::hasColumn('detail_transaksi', 'subtotal') ? 'subtotal' : null;
 
         // barang: nama barang
         $bNamaCol = Schema::hasColumn('barang', 'nama_barang') ? 'nama_barang'
@@ -94,7 +98,7 @@ class LaporanPenjualanController extends Controller
         $rows = [];
 
         // --------- Query hanya jika kolom kunci tersedia ----------
-        if ($tDateCol && $qtyCol && $hargaCol) {
+        if ($tDateCol && $qtyCol) {
             try {
                 $type = Schema::getColumnType('transaksi', $tDateCol); // 'date' | 'datetime' | ...
             } catch (\Throwable $e) {
@@ -104,21 +108,63 @@ class LaporanPenjualanController extends Controller
             $startVal = $type === 'date' ? $start->toDateString() : $start->toDateTimeString();
             $endVal   = $type === 'date' ? $end->toDateString()   : $end->toDateTimeString();
 
-            $rows = DB::table('detail_transaksi as dt')
-                ->join('transaksi as t', "t.$tPk", '=', "dt.$dtTransFk")
-                ->join('barang as b', "b.id_barang", '=', "dt.$dtBarangFk")
-                ->whereBetween("t.$tDateCol", [$startVal, $endVal])
-                ->selectRaw("
-                    DATE(t.$tDateCol) as tanggal,
-                    b.$bNamaCol as nama_barang,
-                    dt.$qtyCol   as qty,
-                    dt.$hargaCol as harga_satuan,
-                    (dt.$qtyCol * dt.$hargaCol) as subtotal
-                ")
-                ->orderBy("t.$tDateCol")
-                ->get()
-                ->map(fn ($r) => (array) $r)
-                ->toArray();
+            // Build select based on available columns
+            if ($hargaCol) {
+                // If harga_satuan exists in detail_transaksi, use it
+                $rows = DB::table('detail_transaksi as dt')
+                    ->join('transaksi as t', "t.$tPk", '=', "dt.$dtTransFk")
+                    ->join('barang as b', "b.id_barang", '=', "dt.$dtBarangFk")
+                    ->whereBetween("t.$tDateCol", [$startVal, $endVal])
+                    ->selectRaw("
+                        DATE(t.$tDateCol) as tanggal,
+                        b.$bNamaCol as nama_barang,
+                        dt.$qtyCol   as qty,
+                        dt.$hargaCol as harga_satuan,
+                        (dt.$qtyCol * dt.$hargaCol) as subtotal
+                    ")
+                    ->orderBy("t.$tDateCol")
+                    ->get()
+                    ->map(fn ($r) => (array) $r)
+                    ->toArray();
+            } elseif ($subtotalCol) {
+                // If we have subtotal, calculate harga_satuan from subtotal / jumlah_pesanan
+                // Also get harga_satuan from barang table as fallback
+                $rows = DB::table('detail_transaksi as dt')
+                    ->join('transaksi as t', "t.$tPk", '=', "dt.$dtTransFk")
+                    ->join('barang as b', "b.id_barang", '=', "dt.$dtBarangFk")
+                    ->whereBetween("t.$tDateCol", [$startVal, $endVal])
+                    ->selectRaw("
+                        DATE(t.$tDateCol) as tanggal,
+                        b.$bNamaCol as nama_barang,
+                        dt.$qtyCol as qty,
+                        CASE 
+                            WHEN dt.$qtyCol > 0 THEN dt.$subtotalCol / dt.$qtyCol
+                            ELSE b.harga_satuan
+                        END as harga_satuan,
+                        dt.$subtotalCol as subtotal
+                    ")
+                    ->orderBy("t.$tDateCol")
+                    ->get()
+                    ->map(fn ($r) => (array) $r)
+                    ->toArray();
+            } else {
+                // Fallback: use harga_satuan from barang table
+                $rows = DB::table('detail_transaksi as dt')
+                    ->join('transaksi as t', "t.$tPk", '=', "dt.$dtTransFk")
+                    ->join('barang as b', "b.id_barang", '=', "dt.$dtBarangFk")
+                    ->whereBetween("t.$tDateCol", [$startVal, $endVal])
+                    ->selectRaw("
+                        DATE(t.$tDateCol) as tanggal,
+                        b.$bNamaCol as nama_barang,
+                        dt.$qtyCol as qty,
+                        b.harga_satuan as harga_satuan,
+                        (dt.$qtyCol * b.harga_satuan) as subtotal
+                    ")
+                    ->orderBy("t.$tDateCol")
+                    ->get()
+                    ->map(fn ($r) => (array) $r)
+                    ->toArray();
+            }
         }
 
         return view('filament.pages.laporan-penjualan', [

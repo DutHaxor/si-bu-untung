@@ -110,7 +110,7 @@ class AlamatController extends Controller
             ], 401);
         }
 
-        $alamat = AlamatPelanggan::where('id', $id)
+        $alamat = AlamatPelanggan::where('id_alamat', $id)
             ->where('id_pelanggan', $pelanggan->id_pelanggan)
             ->first();
 
@@ -175,7 +175,7 @@ class AlamatController extends Controller
             ], 401);
         }
 
-        $alamat = AlamatPelanggan::where('id', $id)
+        $alamat = AlamatPelanggan::where('id_alamat', $id)
             ->where('id_pelanggan', $pelanggan->id_pelanggan)
             ->first();
 

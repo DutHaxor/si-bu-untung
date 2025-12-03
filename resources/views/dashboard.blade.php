@@ -22,7 +22,7 @@
 
   <div class="dash-topbar">
     <div>
-      <p class="dash-topbar-title">Owner</p>
+      <p class="dash-topbar-title">{{ ucfirst(auth('staff')->user()->role) }}</p>
       <p style="margin:4px 0 0;color:#6b7280;font-weight:500;font-size:.95rem">Ringkasan performa toko</p>
     </div>
   </div>

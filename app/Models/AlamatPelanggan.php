@@ -10,6 +10,7 @@ class AlamatPelanggan extends Model
     use HasFactory;
 
     protected $table = 'alamat_pelanggan';
+    protected $primaryKey = 'id_alamat';
 
     protected $fillable = [
         'id_pelanggan',

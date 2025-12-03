@@ -252,6 +252,7 @@ class BarangController extends Controller
             'mnyk' => 'Minyak',
             'brs'  => 'Beras',
             'mnm'  => 'Minuman',
+            'mie'  => 'Mie',
         ];
 
         $prefix = strtolower(trim($request->query('prefix', '')));

@@ -184,6 +184,10 @@ Route::middleware('auth:staff')->group(function () {
         // ALIAS: /laporan/penjualan -> /laporan-penjualan
         Route::redirect('/laporan/penjualan', '/laporan-penjualan')
             ->name('ui.laporan-penjualan.alias');
+
+        // Staff Management
+        Route::get('/staff/create', [App\Http\Controllers\StaffController::class, 'create'])->name('staff.create');
+        Route::post('/staff', [App\Http\Controllers\StaffController::class, 'store'])->name('staff.store');
     });
 });
 

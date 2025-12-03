@@ -59,4 +59,39 @@ class StaffController extends Controller
 
         return redirect()->route('login.form')->with('success', 'You have logged out successfully.');
     }
+
+    // Show create staff form
+    public function create()
+    {
+        return view('staff.create');
+    }
+
+    // Store new staff
+    public function store(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|max:255|unique:staff,username',
+            'email' => 'required|email|max:255|unique:staff,email',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:owner,manager,karyawan',
+        ]);
+
+        // Generate ID: S + timestamp + random (simple unique string)
+        // Or better: S001, S002... but finding the max is tricky with string type.
+        // Let's use a simple unique ID strategy: "S" . time() . rand(10,99)
+        // Or just UUID if the column supports it, but let's stick to a short string if possible.
+        // Looking at other migrations, it seems to be string.
+        
+        $id_staff = 'S' . date('ymd') . rand(100, 999);
+
+        Staff::create([
+            'id_staff' => $id_staff,
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Staff berhasil ditambahkan!');
+    }
 }

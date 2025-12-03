@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('alamat_pelanggan', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_alamat');
             $table->string('id_pelanggan', 20);
             $table->string('label', 50)->default('Alamat'); // Rumah, Kos, Kantor, dll
             $table->string('nama_penerima', 100);

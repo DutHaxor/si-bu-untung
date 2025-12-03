@@ -9,6 +9,11 @@ return [
         'rokok'   => 'RKK',
         'minuman' => 'MNM',
         'makanan' => 'MKN',
+        'mie'     => 'MIE',
+        'minyak' => 'MNYK',
+        'beras' => 'BRS',
+        'tepung' => 'TPG',
+        'susu' => 'SUS',
     ],
 
     // Panjang digit nomor sequence (PREFIX + nomor)
